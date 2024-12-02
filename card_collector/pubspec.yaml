@@ -30,6 +30,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http: ^1.2.2 # For making API requests
+  sqflite: ^2.0.0+4 # For SQLite database management
+  path_provider: ^2.0.0 # For finding device storage directories
+  flutter_dotenv: ^5.0.2
 
 
   # The following adds the Cupertino Icons font to your application.

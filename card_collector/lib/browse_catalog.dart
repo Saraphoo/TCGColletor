@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'database_helper.dart';
 import 'sort_cards.dart';
-import 'filter_cards';
+import 'filter_cards.dart';
 
 class BrowseCatalogPage extends StatefulWidget {
   @override
@@ -39,6 +39,7 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
                 value: 'Alphabetical',
                 child: Text('Alphabetical'),
               ),
+              /**
               DropdownMenuItem(
                 value: 'Most Cards Owned',
                 child: Text('Most Cards Owned'),
@@ -47,6 +48,7 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
                 value: 'Least Cards Owned',
                 child: Text('Least Cards Owned'),
               ),
+              */
               DropdownMenuItem(
                 value: 'Most HP',
                 child: Text('Most HP'),
@@ -176,8 +178,10 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
             onChanged: (String? value) async {
                 FilterCards filter = FilterCards();
                 List<Map<String, dynamic>> filteredCards = await filter.filterCards(value);
-              }
-            },
+                setState(() {
+                  cards = Future.value(filteredCards);
+                });
+            }
           ),
         ],
       ),

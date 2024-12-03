@@ -23,7 +23,6 @@ class DatabaseHelper {
 
   Future<Database> _initializeDatabase() async {
     final dbPath = await getDatabasesPath();
-    debugPrint(dbPath);
     // Use databaseFactory.openDatabase to ensure compatibility with sqflite_common_ffi
     return await databaseFactory.openDatabase(
       join(dbPath, 'pokemon.db'),

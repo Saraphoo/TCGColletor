@@ -88,7 +88,8 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
                   break;
               }
               if (sort != null) {
-                List<Map<String, dynamic>> sortedCards = await sort.sortCards();
+                List<Map<String,dynamic>> currentCards = await cards;
+                List<Map<String, dynamic>> sortedCards = await sort.sortCards(currentCards);
                 setState(() {
                   cards = Future.value(sortedCards);
                 });
@@ -177,7 +178,8 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
             ],
             onChanged: (String? value) async {
                 FilterCards filter = FilterCards();
-                List<Map<String, dynamic>> filteredCards = await filter.filterCards(value);
+                List<Map<String,dynamic>> currentCards = await cards;
+                List<Map<String, dynamic>> filteredCards = await filter.filterCards(value, currentCards);
                 setState(() {
                   cards = Future.value(filteredCards);
                 });
@@ -193,7 +195,7 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error fetching cards: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No cards found.')); //Always triggers
+            return Center(child: Text('No cards found.')); 
           } else {
             final cardList = snapshot.data!;
             return ListView.builder(

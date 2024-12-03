@@ -2,16 +2,16 @@ import 'dart:convert';
 import 'database_helper.dart';
 
 class FilterCards {
-  Future<List<Map<String, dynamic>>> filterCards(String? selectedType) async {
+  Future<List<Map<String, dynamic>>> filterCards(String? selectedType, List<Map<String,dynamic>> cards) async {
     if (selectedType == null) {
       return [];
     }
 
     DatabaseHelper dbHelper = DatabaseHelper();
-    List<Map<String, dynamic>> data = await dbHelper.fetchCards();
+    //cards = await dbHelper.fetchCards();
     List<Map<String, dynamic>> filteredCards = [];
 
-    for (var card in data) {
+    for (var card in cards) {
       var types = card['types'];
 
       //Decode JSON string so types can be compared properly

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'database_helper.dart';
 import 'sort_cards.dart';
+import 'filter_cards';
 
 class BrowseCatalogPage extends StatefulWidget {
   @override
@@ -29,6 +30,8 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
       appBar: AppBar(
         title: Text('Browse Card Catalog'),
         actions: [
+
+          //Dropdown for sorting
           DropdownButton<String>(
             hint: Text('Sort Cards'),
             items: const [
@@ -84,6 +87,95 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
               }
               if (sort != null) {
                 List<Map<String, dynamic>> sortedCards = await sort.sortCards();
+                setState(() {
+                  cards = Future.value(sortedCards);
+                });
+              }
+            },
+          ),
+          const SizedBox(height: 20), // Space between dropdowns
+
+
+          //Dropdown for filtering
+          DropdownButton<String>(
+            hint: Text('Filter Cards By Type'),
+            items: const [
+              DropdownMenuItem(
+                value: 'Bug',
+                child: Text('Bug'),
+              ),
+              DropdownMenuItem(
+                value: 'Dark',
+                child: Text('Dark'),
+              ),
+              DropdownMenuItem(
+                value: 'Dragon',
+                child: Text('Dragon'),
+              ),
+              DropdownMenuItem(
+                value: 'Electric',
+                child: Text('Electric'),
+              ),
+              DropdownMenuItem(
+                value: 'Fairy',
+                child: Text('Fairy'),
+              ),
+              DropdownMenuItem(
+                value: 'Fighting',
+                child: Text('Fighting'),
+              ),
+              DropdownMenuItem(
+                value: 'Fire',
+                child: Text('Fire'),
+              ),
+              DropdownMenuItem(
+                value: 'Flying',
+                child: Text('Flying'),
+              ),
+              DropdownMenuItem(
+                value: 'Ghost',
+                child: Text('Ghost'),
+              ),
+              DropdownMenuItem(
+                value: 'Grass',
+                child: Text('Grass'),
+              ),
+              DropdownMenuItem(
+                value: 'Ground',
+                child: Text('Ground'),
+              ),
+              DropdownMenuItem(
+                value: 'Ice',
+                child: Text('Ice'),
+              ),
+              DropdownMenuItem(
+                value: 'Normal',
+                child: Text('Normal'),
+              ),
+              DropdownMenuItem(
+                value: 'Poison',
+                child: Text('Poison'),
+              ),
+              DropdownMenuItem(
+                value: 'Psychic',
+                child: Text('Psychic'),
+              ),
+              DropdownMenuItem(
+                value: 'Rock',
+                child: Text('Rock'),
+              ),
+              DropdownMenuItem(
+                value: 'Steel',
+                child: Text('Steel'),
+              ),
+              DropdownMenuItem(
+                value: 'Water',
+                child: Text('Water'),
+              ),
+            ],
+            onChanged: (String? value) async {
+                FilterCards filter = FilterCards();
+                List<Map<String, dynamic>> filteredCards = await filter.filterCards(value);
               }
             },
           ),

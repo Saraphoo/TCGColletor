@@ -11,6 +11,10 @@ import 'browse_catalog.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Load environment variables
+  print('Loading environment variables...');
+  await dotenv.load(fileName:'.env');
+
   // Initialize database factory for desktop platforms
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
     print('Initializing database factory for desktop...');
@@ -21,9 +25,7 @@ void main() async {
     print('Skipping database factory initialization for non-desktop platforms.');
   }
 
-  // Load environment variables
-  print('Loading environment variables...');
-  await dotenv.load(fileName: "../../.env");
+
 
   // Initialize data after database factory is initialized
   print('Initializing data...');

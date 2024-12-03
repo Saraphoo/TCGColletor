@@ -1,9 +1,9 @@
 import 'package:card_collector/database_helper.dart';
 
 
-/// Allows the user to sort by: name,most cards owned, least cards owned, HP, number, or rarity
+/// Allows the user to sort by: Name, Most Owned, Least Owned, Most HP, Least HP, ID
 abstract class SortCards { 
-  ///Uses an array of all pokemon cards then reorders them based on what the user is sorting by. Returns array is sorted order. 
+  ///Uses an list of all pokemon cards then reorders them based on what the user is sorting by. Returned list in sorted order. 
   Future<List<Map<String,dynamic>>> sortCards();
 } 
 
@@ -68,7 +68,7 @@ class SortByMostHP implements SortCards{
       return data;
   } 
 } 
-///Sorts cards by most HP 
+///Sorts cards by least HP 
 ///Defaults to alphabetical for equal HP 
 class SortByLeastHP implements SortCards{ 
   @override 

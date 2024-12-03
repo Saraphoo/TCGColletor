@@ -12,27 +12,27 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Load environment variables
-  print('Loading environment variables...');
+  debugPrint('Loading environment variables...');
   await dotenv.load(fileName:'.env');
 
   // Initialize database factory for desktop platforms
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
-    print('Initializing database factory for desktop...');
+    debugPrint('Initializing database factory for desktop...');
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi; // Proper initialization
-    print('Database factory initialized.');
+    debugPrint('Database factory initialized.');
   } else {
-    print('Skipping database factory initialization for non-desktop platforms.');
+    debugPrint('Skipping database factory initialization for non-desktop platforms.');
   }
 
 
 
   // Initialize data after database factory is initialized
-  print('Initializing data...');
+  debugPrint('Initializing data...');
   await initializeData();
 
   // Run the app
-  print('Starting the app...');
+  debugPrint('Starting the app...');
   runApp(MyApp());
 }
 
@@ -82,21 +82,21 @@ Future<void> initializeData() async {
   final dbHelper = DatabaseHelper();
 
   try {
-    print('Checking for existing cards in the database...');
+    debugPrint('Checking for existing cards in the database...');
     final existingCards = await dbHelper.fetchCards();
 
     if (existingCards.isEmpty) {
-      print('No cards found in the database. Fetching from API or file...');
+      debugPrint('No cards found in the database. Fetching from API or file...');
       final cards = await pokemonService.loadData();
-      print('Fetched ${cards.length} cards successfully.');
+      debugPrint('Fetched ${cards.length} cards successfully.');
 
-      print('Saving cards to database...');
+      debugPrint('Saving cards to database...');
       await dbHelper.insertCards(cards);
-      print('Cards saved to database successfully.');
+      debugPrint('Cards saved to database successfully.');
     } else {
-      print('Cards already exist in the database. Skipping data load.');
+      debugPrint('Cards already exist in the database. Skipping data load.');
     }
   } catch (error) {
-    print('Error during data initialization: $error');
+    debugPrint('Error during data initialization: $error');
   }
 }

@@ -17,7 +17,9 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
 
   Future<List<Map<String, dynamic>>> fetchCardsFromDatabase() async {
     final dbHelper = DatabaseHelper();
-    return await dbHelper.fetchCards(); // Fetch cards from SQLite
+    final cards = await dbHelper.fetchCards(); // Fetch cards from SQLite
+    print('Fetched cards: $cards');  // Log the fetched cards to the console
+    return cards;
   }
 
   @override
@@ -34,7 +36,7 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error fetching cards: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No cards found.'));
+            return Center(child: Text('No cards found.')); //Always triggers
           } else {
             final cardList = snapshot.data!;
             return ListView.builder(

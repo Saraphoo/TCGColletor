@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io' show File; // For file handling on non-web platforms
-import 'package:flutter/foundation.dart' show kIsWeb; // For web detection
+import 'package:flutter/foundation.dart'; // For web detection and debugPrint
 import 'package:file_picker/file_picker.dart'; // For file picking
 import 'package:http/http.dart' as http;
 
@@ -10,8 +10,8 @@ class PokemonTCGService {
   /// Fetch Pokémon card data from the API
   Future<List<Map<String, dynamic>>> fetchCardsFromAPI() async {
     final response = await http.get(Uri.parse(baseUrl));
-
     if (response.statusCode == 200) {
+      debugPrint('Connected to API...'); 
       final data = json.decode(response.body)['data'];
       return data.map<Map<String, dynamic>>((card) {
         return _parseCard(card);
@@ -76,19 +76,19 @@ class PokemonTCGService {
   Future<List<Map<String, dynamic>>> loadData() async {
     if (kIsWeb) {
       try {
-        print('Attempting to fetch data from API...');
+        debugPrint('Attempting to fetch data from API...');
         final apiData = await fetchCardsFromAPI();
-        print('Successfully fetched data from API.');
+        debugPrint('Successfully fetched data from API.');
         return apiData;
       } catch (apiError) {
-        print('API fetch failed: $apiError');
-        print('Falling back to file upload...');
+        debugPrint('API fetch failed: $apiError');
+        debugPrint('Falling back to file upload...');
         final fileData = await fetchCardsFromFile();
-        print('Successfully loaded data from file.');
+        debugPrint('Successfully loaded data from file.');
         return fileData;
       }
     } else {
-      print('Fetching data from API on non-web platform...');
+      debugPrint('Fetching data from API on non-web platform...');
       return await fetchCardsFromAPI();
     }
   }
@@ -99,30 +99,27 @@ class PokemonTCGService {
       'id': card['id'],
       'name': card['name'],
       'supertype': card['supertype'],
-      'subtypes': (card['subtypes'] ?? []).join(', '),
+      'subtypes': json.encode(card['subtypes'] ?? []),
       'hp': card['hp'],
-      'types': (card['types'] ?? []).join(', '),
-      'evolvesTo': (card['evolvesTo'] ?? []).join(', '),
-      'rules': (card['rules'] ?? []).join('; '),
+      'types': json.encode(card['types'] ?? []),
+      'evolvesTo': json.encode(card['evolvesTo'] ?? []),
+      'rules': json.encode(card['rules'] ?? []),
       'attacks': json.encode(card['attacks'] ?? []),
       'weaknesses': json.encode(card['weaknesses'] ?? []),
       'resistances': json.encode(card['resistances'] ?? []),
-      'retreatCost': (card['retreatCost'] ?? []).join(', '),
+      'retreatCost': json.encode(card['retreatCost'] ?? []),
       'convertedRetreatCost': card['convertedRetreatCost'],
-      'set': {
-        'id': card['set']['id'],
-        'name': card['set']['name'],
-        'series': card['set']['series'],
-      },
+      'set': json.encode(card['set']),
       'rarity': card['rarity'],
       'artist': card['artist'],
       'number': card['number'],
-      'nationalPokedexNumbers': (card['nationalPokedexNumbers'] ?? []).join(', '),
+      'nationalPokedexNumbers': json.encode(card['nationalPokedexNumbers'] ?? []),
       'legalities': json.encode(card['legalities']),
       'smallImage': card['images']['small'],
       'largeImage': card['images']['large'],
-      'tcgplayer_url': card['tcgplayer']['url'],
-      'tcgplayer_prices': json.encode(card['tcgplayer']['prices']),
+      'tcgplayer_url': card['tcgplayer']?['url'] ?? '',
+      'tcgplayer_prices': json.encode(card['tcgplayer']?['prices'] ?? {}),
+
     };
   }
 }

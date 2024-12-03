@@ -23,37 +23,40 @@ class DatabaseHelper {
 
   Future<Database> _initializeDatabase() async {
     final dbPath = await getDatabasesPath();
-
+    debugPrint(dbPath);
     // Use databaseFactory.openDatabase to ensure compatibility with sqflite_common_ffi
     return await databaseFactory.openDatabase(
       join(dbPath, 'pokemon.db'),
       options: OpenDatabaseOptions(
         version: 1,
         onCreate: (db, version) async {
-          await db.execute('''
-            CREATE TABLE cards (
-              id TEXT PRIMARY KEY,
-              name TEXT,
-              supertype TEXT,
-              subtypes TEXT,
-              hp TEXT,
-              types TEXT,
-              evolvesTo TEXT,
-              rules TEXT,
-              attacks TEXT,
-              weaknesses TEXT,
-              retreatCost TEXT,
-              convertedRetreatCost INTEGER,
-              set_id TEXT,
-              set_name TEXT,
-              rarity TEXT,
-              artist TEXT,
-              number TEXT,
-              nationalPokedexNumbers TEXT,
-              smallImage TEXT,
-              largeImage TEXT
-            )
-          ''');
+        await db.execute('''
+          CREATE TABLE cards (
+          id TEXT PRIMARY KEY,
+          name TEXT,
+          supertype TEXT,
+          subtypes TEXT,
+          hp TEXT,
+          types TEXT,
+          evolvesTo TEXT,
+          rules TEXT,
+          attacks TEXT,
+          weaknesses TEXT,
+          resistances TEXT,
+          retreatCost TEXT,
+          convertedRetreatCost INTEGER,
+          "set" TEXT,
+          rarity TEXT,
+          artist TEXT,
+          number TEXT,
+          nationalPokedexNumbers TEXT,
+          legalities TEXT,
+          smallImage TEXT,
+          largeImage TEXT,
+          tcgplayer_url TEXT,
+          tcgplayer_prices TEXT
+          )
+        ''');
         },
       ),
     );
@@ -61,6 +64,7 @@ class DatabaseHelper {
 
   /// Fetch all cards from the database
   Future<List<Map<String, dynamic>>> fetchCards() async {
+    
     final db = await database;
     return await db.query('cards', orderBy: 'name ASC');
   }

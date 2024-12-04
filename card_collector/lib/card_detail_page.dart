@@ -1,5 +1,6 @@
 import 'dart:convert'; // For JSON decoding
 import 'package:flutter/material.dart';
+import 'database_helper.dart'; // Import DatabaseHelper for SQLite operations
 
 class CardDetailPage extends StatefulWidget {
   final Map<String, dynamic> card; // Accepts the card data
@@ -15,6 +16,83 @@ class _CardDetailPageState extends State<CardDetailPage> {
   bool isFavorite = false; // State to track if the card is favorite
   bool isOwned = false; // State to track if the card is owned
   int copiesOwned = 0; // State to track the number of copies owned
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWishState();
+    _loadFavoriteState();
+    _loadOwnedState(); // Load the ownership state
+  }
+
+  /// Load the wish state from the database
+  Future<void> _loadWishState() async {
+    final dbHelper = DatabaseHelper();
+    final wished = await dbHelper.isWished(widget.card['id']); // Check if card is wished
+    setState(() {
+      isWishedFor = wished; // Update the UI state
+    });
+  }
+
+  /// Load the ownership state from the database
+  Future<void> _loadOwnedState() async {
+    final dbHelper = DatabaseHelper();
+    final quantity = await dbHelper.getOwnedQuantity(widget.card['id']);
+    setState(() {
+      isOwned = quantity > 0;
+      copiesOwned = quantity;
+    });
+  }
+
+  /// Toggle the wish state and update the database
+  Future<void> _toggleWish() async {
+    final dbHelper = DatabaseHelper();
+    setState(() {
+      isWishedFor = !isWishedFor; // Toggle state
+    });
+
+    if (isWishedFor) {
+      await dbHelper.addWish(widget.card['id']); // Add to wish table
+    } else {
+      await dbHelper.removeWish(widget.card['id']); // Remove from wish table
+    }
+  }
+
+  /// Load the favorite state from the database
+  Future<void> _loadFavoriteState() async {
+    final dbHelper = DatabaseHelper();
+    final favorite = await dbHelper.isFavorite(widget.card['id']); // Check if card is favorite
+    setState(() {
+      isFavorite = favorite; // Update the UI state
+    });
+  }
+
+  /// Toggle the favorite state and update the database
+  Future<void> _toggleFavorite() async {
+    final dbHelper = DatabaseHelper();
+    setState(() {
+      isFavorite = !isFavorite; // Toggle state
+    });
+
+    if (isFavorite) {
+      await dbHelper.addFavorite(widget.card['id']); // Add to favorite table
+    } else {
+      await dbHelper.removeFavorite(widget.card['id']); // Remove from favorite table
+    }
+  }
+
+  /// Update ownership state in the database
+  Future<void> _updateOwnership() async {
+    final dbHelper = DatabaseHelper();
+    if (isOwned) {
+      // If owned, add or update the quantity
+      await dbHelper.addOrUpdateOwned(widget.card['id'], copiesOwned > 0 ? copiesOwned : 1);
+    } else {
+      // If not owned, remove the card from the database
+      await dbHelper.removeOwned(widget.card['id']);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +117,7 @@ class _CardDetailPageState extends State<CardDetailPage> {
                 isFavorite ? Icons.favorite : Icons.favorite_border, // Filled or hollow heart
                 color: isFavorite ? Colors.red : Colors.grey,
               ),
-              onPressed: () {
-                setState(() {
-                  isFavorite = !isFavorite; // Toggle state
-                });
-              },
+              onPressed: _toggleFavorite, // Call the toggle favorite function
             ),
           ),
 
@@ -55,11 +129,7 @@ class _CardDetailPageState extends State<CardDetailPage> {
                 isWishedFor ? Icons.star : Icons.star_border, // Solid or hollow star
                 color: isWishedFor ? Colors.orange : Colors.grey,
               ),
-              onPressed: () {
-                setState(() {
-                  isWishedFor = !isWishedFor; // Toggle state
-                });
-              },
+              onPressed: _toggleWish, // Call the toggle wish function
             ),
           ),
         ],
@@ -117,11 +187,12 @@ class _CardDetailPageState extends State<CardDetailPage> {
                   children: [
                     Checkbox(
                       value: isOwned,
-                      onChanged: (value) {
+                      onChanged: (value) async {
                         setState(() {
                           isOwned = value ?? false;
                           if (!isOwned) copiesOwned = 0; // Reset copies if unowned
                         });
+                        await _updateOwnership(); // Update database
                       },
                     ),
                     Text(
@@ -136,10 +207,11 @@ class _CardDetailPageState extends State<CardDetailPage> {
                   children: [
                     IconButton(
                       onPressed: isOwned && copiesOwned > 0
-                          ? () {
+                          ? () async {
                         setState(() {
                           copiesOwned--;
                         });
+                        await _updateOwnership();
                       }
                           : null, // Disable if not owned or copies are 0
                       icon: Icon(Icons.remove),
@@ -150,10 +222,11 @@ class _CardDetailPageState extends State<CardDetailPage> {
                     ),
                     IconButton(
                       onPressed: isOwned
-                          ? () {
+                          ? () async {
                         setState(() {
                           copiesOwned++;
                         });
+                        await _updateOwnership();
                       }
                           : null, // Disable if not owned
                       icon: Icon(Icons.add),

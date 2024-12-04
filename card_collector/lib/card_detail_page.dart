@@ -127,6 +127,7 @@ class _CardDetailPageState extends State<CardDetailPage> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: IconButton(
               icon: Icon(
+                
                 isWishedFor ? Icons.star : Icons.star_border, // Solid or hollow star
                 color: isWishedFor ? Colors.orange : Colors.grey,
               ),
@@ -142,13 +143,68 @@ class _CardDetailPageState extends State<CardDetailPage> {
           children: [
             // Card Image
             if (widget.card['smallImage'] != null)
-              Center(
-                child: Image.network(
-                  widget.card['smallImage'],
-                  height: 200,
-                  fit: BoxFit.contain,
+              // Card Image with Arrow Button
+if (widget.card['smallImage'] != null)
+  Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+
+      IconButton(
+        icon: Icon(
+          Icons.arrow_back,
+          size: 24,
+        ),
+        onPressed: () {
+          if(widget.index > 0){
+            final newCard = widget.cards[widget.index - 1];
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CardDetailPage(
+                  card: newCard,
+                  cards: widget.cards,
+                  index: widget.index - 1,
                 ),
               ),
+            );
+          }
+        },
+      ),
+      Expanded(
+        child: Image.network(
+          widget.card['smallImage'],
+          height: 200,
+          fit: BoxFit.contain,
+        ),
+      ),
+      
+      // Arrow Button
+      IconButton(
+        icon: Icon(
+          Icons.arrow_forward,
+          size: 24,
+        ),
+        onPressed: () {
+            if(widget.index < widget.cards.length-1){
+            final newCard = widget.cards[widget.index + 1];
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CardDetailPage(
+                  card: newCard,
+                  cards: widget.cards,
+                  index: widget.index + 1,
+                ),
+              ),
+            );
+          }
+        },
+      ),
+    ],
+  ),
+
             SizedBox(height: 16),
 
             // Card Name
@@ -291,29 +347,6 @@ class _CardDetailPageState extends State<CardDetailPage> {
                   Text('Name: ${set['name']}'),
                 ],
               ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.arrow_forward,
-                    size: 24,
-                  ),
-                  onPressed: () {
-                    final newCard = widget.cards[widget.index+1];
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CardDetailPage(card: newCard, cards: widget.cards, index: widget.index + 1),
-                      ),
-                    );
-                  }
-                ),
-
-              ),
-            ),
           ],
         ),
       ),

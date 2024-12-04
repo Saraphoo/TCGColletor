@@ -30,7 +30,7 @@ class DatabaseHelper {
     return await databaseFactory.openDatabase(
       path,
       options: OpenDatabaseOptions(
-        version: 3, // Increment this version
+        version: 4, // Increment this version
         onCreate: (db, version) async {
           await db.execute('''
           CREATE TABLE cards (
@@ -74,18 +74,24 @@ class DatabaseHelper {
           )
         ''');
 
+          await db.execute('''
+          CREATE TABLE owned(
+            id TEXT PRIMARY KEY, -- Card ID
+            quantity TEXT -- Quantity of card owned
+          ''');
+
           debugPrint('Database created with tables: cards, wish, favorite');
         },
 
         onUpgrade: (db, oldVersion, newVersion) async {
-          if (oldVersion < 3) {
+          if (oldVersion < 4) {
             await db.execute('''
-            CREATE TABLE favorite (
+            CREATE TABLE owned (
               id TEXT PRIMARY KEY, -- Card ID
-              timestamp TEXT -- Timestamp of when the card was marked as wished
+              quantity INTEGER -- Quantity of card owned
             )
           ''');
-            debugPrint('Database upgraded: favorite table added');
+            debugPrint('Database upgraded: owned table added');
           }
         },
       ),
@@ -180,4 +186,37 @@ class DatabaseHelper {
      );
      return result.isNotEmpty; // Returns true if the card is found
    }
+
+   ///Insert owned card into the database
+  Future<void> addOrUpdateOwned(String cardId, int quantity) async {
+    final db = await database;
+    await db.insert(
+      'owned',
+      {'id': cardId, 'quantity': quantity},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+///remove owned card from the database
+  Future<void> removeOwned(String cardId) async {
+    final db = await database;
+    await db.delete(
+      'owned',
+      where: 'id = ?',
+      whereArgs: [cardId],
+    );
+  }
+///check if a card is owned
+  Future<int> getOwnedQuantity(String cardId) async {
+    final db = await database;
+    final result = await db.query(
+      'owned',
+      where: 'id = ?',
+      whereArgs: [cardId],
+    );
+    if (result.isNotEmpty) {
+      return result.first['quantity'] as int;
+    }
+    return 0; // Not owned
+  }
+
 }

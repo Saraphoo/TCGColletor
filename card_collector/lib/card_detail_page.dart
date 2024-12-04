@@ -20,8 +20,9 @@ class _CardDetailPageState extends State<CardDetailPage> {
   @override
   void initState() {
     super.initState();
-    _loadWishState(); // Load the initial wish state from the database
-    _loadFavoriteState(); // Load the initial favorite state from the database
+    _loadWishState();
+    _loadFavoriteState();
+    _loadOwnedState(); // Load the ownership state
   }
 
   /// Load the wish state from the database
@@ -30,6 +31,16 @@ class _CardDetailPageState extends State<CardDetailPage> {
     final wished = await dbHelper.isWished(widget.card['id']); // Check if card is wished
     setState(() {
       isWishedFor = wished; // Update the UI state
+    });
+  }
+
+  /// Load the ownership state from the database
+  Future<void> _loadOwnedState() async {
+    final dbHelper = DatabaseHelper();
+    final quantity = await dbHelper.getOwnedQuantity(widget.card['id']);
+    setState(() {
+      isOwned = quantity > 0;
+      copiesOwned = quantity;
     });
   }
 
@@ -69,6 +80,19 @@ class _CardDetailPageState extends State<CardDetailPage> {
       await dbHelper.removeFavorite(widget.card['id']); // Remove from favorite table
     }
   }
+
+  /// Update ownership state in the database
+  Future<void> _updateOwnership() async {
+    final dbHelper = DatabaseHelper();
+    if (isOwned) {
+      // If owned, add or update the quantity
+      await dbHelper.addOrUpdateOwned(widget.card['id'], copiesOwned > 0 ? copiesOwned : 1);
+    } else {
+      // If not owned, remove the card from the database
+      await dbHelper.removeOwned(widget.card['id']);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -163,11 +187,12 @@ class _CardDetailPageState extends State<CardDetailPage> {
                   children: [
                     Checkbox(
                       value: isOwned,
-                      onChanged: (value) {
+                      onChanged: (value) async {
                         setState(() {
                           isOwned = value ?? false;
                           if (!isOwned) copiesOwned = 0; // Reset copies if unowned
                         });
+                        await _updateOwnership(); // Update database
                       },
                     ),
                     Text(
@@ -182,10 +207,11 @@ class _CardDetailPageState extends State<CardDetailPage> {
                   children: [
                     IconButton(
                       onPressed: isOwned && copiesOwned > 0
-                          ? () {
+                          ? () async {
                         setState(() {
                           copiesOwned--;
                         });
+                        await _updateOwnership();
                       }
                           : null, // Disable if not owned or copies are 0
                       icon: Icon(Icons.remove),
@@ -196,10 +222,11 @@ class _CardDetailPageState extends State<CardDetailPage> {
                     ),
                     IconButton(
                       onPressed: isOwned
-                          ? () {
+                          ? () async {
                         setState(() {
                           copiesOwned++;
                         });
+                        await _updateOwnership();
                       }
                           : null, // Disable if not owned
                       icon: Icon(Icons.add),

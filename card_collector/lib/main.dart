@@ -1,5 +1,4 @@
 import 'package:card_collector/card_detail_page.dart';
-import 'package:card_collector/user_catalog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io'; // For platform detection
@@ -50,7 +49,6 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => LandingPage(),
         '/browse': (context) => BrowseCatalogPage(),
-        '/your_catalog': (context) => UserCatalogPage(),
       },
     );
   }

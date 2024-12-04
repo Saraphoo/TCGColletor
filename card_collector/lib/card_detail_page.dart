@@ -248,7 +248,7 @@ if (widget.card['smallImage'] != null)
                         setState(() {
                           isOwned = value ?? false;
                           if (!isOwned) copiesOwned = 0; // Reset copies if unowned
-                          if (isOwned) copiesOwned = 1; // Reset copies if unowned
+                          if (isOwned) copiesOwned = 1; // Reset copies to 1 if owned
                         });
                         await _updateOwnership(); // Update database
                       },

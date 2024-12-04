@@ -2,7 +2,28 @@ import 'dart:convert';
 import 'database_helper.dart';
 
 class FilterCards {
+  Future<List<Map<String,dynamic>>> filterOwned(List<Map<String,dynamic>> cards, bool isToggled) async {
+    DatabaseHelper dbHelper = DatabaseHelper();
+    if(isToggled){
+    print('isToggled');
+        List<Map<String,dynamic>> newCards = [];
+        List<Map<String,dynamic>> ownedCards = await dbHelper.queryOwned();
+        for(int i = 0; i < cards.length; i++){
+          for(int j = 0; j < ownedCards.length; j++){
+            if(cards[i]['id'] == ownedCards[j]['id']){
+              newCards.add(cards[i]);
+            }
+          }
+        }
+        print(newCards);
+        return newCards;
+    } else{
+      print('!isToggled');
+      return dbHelper.fetchCards();
+    }
+  }
   Future<List<Map<String, dynamic>>> filterCards(String? selectedType, List<Map<String,dynamic>> cards) async {
+    print("attempting to filter cards");
     if (selectedType == null) {
       return [];
     }

@@ -18,8 +18,13 @@ class HandleSort {
           if (int.parse(list[j][sortBy]) < int.parse(list[minIndex][sortBy])) {
             minIndex = j;
           }
+        } else{
+          if (list[j][sortBy].compareTo(list[minIndex][sortBy]) < 0) {
+            minIndex = j;
+          }
         }
       }
+      
 
       // Swap the found minimum element with the first element
       Map<String,dynamic> temp = list[i];

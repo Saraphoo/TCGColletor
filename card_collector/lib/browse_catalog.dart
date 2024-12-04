@@ -205,7 +205,7 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
                 if(filtered){
                   DatabaseHelper dbhelper = DatabaseHelper();
                   List<Map<String, dynamic>> newCards = await dbhelper.fetchCards();
-                  sort!.sortCards(newCards);
+                  newCards = await sort!.sortCards(newCards);
                   filteredCards = await filter.filterCards(value, newCards);
                 } else {
                   filteredCards = await filter.filterCards(value, currentCards);
@@ -246,7 +246,6 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
             );
           }
         },
-
       ),
     );
   }

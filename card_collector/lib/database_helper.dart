@@ -205,6 +205,7 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+
 ///remove owned card from the database
   Future<void> removeOwned(String cardId) async {
     final db = await database;
@@ -214,6 +215,7 @@ class DatabaseHelper {
       whereArgs: [cardId],
     );
   }
+
 ///check if a card is owned
   Future<int> getOwnedQuantity(String cardId) async {
     final db = await database;
@@ -227,5 +229,14 @@ class DatabaseHelper {
     }
     return 0; // Not owned
   }
+
+  ///Query db where cards are owned
+  /// Fetch all owned card IDs from the owned table
+  Future<List<String>> fetchOwnedIds() async {
+    final db = await database;
+    final results = await db.query('owned', columns: ['id']);
+    return results.map((row) => row['id'] as String).toList();
+  }
+
 
 }

@@ -1,7 +1,8 @@
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:flutter/foundation.dart'; // For platform-specific checks
+import 'dart:io'; // For platform detection
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -12,36 +13,66 @@ class DatabaseHelper {
   DatabaseHelper._internal();
 
   Future<Database> get database async {
+    // Assert to ensure databaseFactory is initialized
+    assert(databaseFactory != null, 'databaseFactory must be initialized before accessing the database.');
+
     if (_database != null) return _database!;
-    _database = await _initDatabase();
+    _database = await _initializeDatabase();
     return _database!;
   }
 
-  Future<Database> _initDatabase() async {
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, 'pokemon_cards.db');
-    return await openDatabase(
-      path,
-      version: 1,
-      onCreate: _onCreate,
+  Future<Database> _initializeDatabase() async {
+    final dbPath = await getDatabasesPath();
+    // Use databaseFactory.openDatabase to ensure compatibility with sqflite_common_ffi
+    return await databaseFactory.openDatabase(
+      join(dbPath, 'pokemon.db'),
+      options: OpenDatabaseOptions(
+        version: 1,
+        onCreate: (db, version) async {
+        await db.execute('''
+          CREATE TABLE cards (
+          id TEXT PRIMARY KEY,
+          name TEXT,
+          supertype TEXT,
+          subtypes TEXT,
+          hp TEXT,
+          types TEXT,
+          evolvesTo TEXT,
+          rules TEXT,
+          attacks TEXT,
+          weaknesses TEXT,
+          resistances TEXT,
+          retreatCost TEXT,
+          convertedRetreatCost INTEGER,
+          "set" TEXT,
+          rarity TEXT,
+          artist TEXT,
+          number TEXT,
+          nationalPokedexNumbers TEXT,
+          legalities TEXT,
+          smallImage TEXT,
+          largeImage TEXT,
+          tcgplayer_url TEXT,
+          tcgplayer_prices TEXT
+          )
+        ''');
+        },
+      ),
     );
   }
 
-  Future<void> _onCreate(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE cards (
-        id TEXT PRIMARY KEY,
-        name TEXT,
-        imageUrl TEXT,
-        supertype TEXT,
-        subtype TEXT
-      )
-    ''');
+  /// Fetch all cards from the database
+  Future<List<Map<String, dynamic>>> fetchCards() async {
+    
+    final db = await database;
+    return await db.query('cards', orderBy: 'name ASC');
   }
 
+  /// Insert multiple cards into the database
   Future<void> insertCards(List<Map<String, dynamic>> cards) async {
     final db = await database;
-    Batch batch = db.batch();
+    final batch = db.batch();
+
     for (var card in cards) {
       batch.insert(
         'cards',
@@ -49,11 +80,7 @@ class DatabaseHelper {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }
-    await batch.commit(noResult: true);
-  }
 
-  Future<List<Map<String, dynamic>>> fetchCards() async {
-    final db = await database;
-    return await db.query('cards');
+    await batch.commit(noResult: true);
   }
 }

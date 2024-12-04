@@ -131,7 +131,7 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
                 child: Text('None'),
               ),
               DropdownMenuItem(
-                value: 'COlorless',
+                value: 'Colorless',
                 child: Text('Colorless'),
               ),
               DropdownMenuItem(

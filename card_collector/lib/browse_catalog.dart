@@ -131,20 +131,20 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
                 child: Text('None'),
               ),
               DropdownMenuItem(
-                value: 'Bug',
-                child: Text('Bug'),
+                value: 'COlorless',
+                child: Text('Colorless'),
               ),
               DropdownMenuItem(
-                value: 'Dark',
-                child: Text('Dark'),
+                value: 'Darkness',
+                child: Text('Darkness'),
               ),
               DropdownMenuItem(
                 value: 'Dragon',
                 child: Text('Dragon'),
               ),
               DropdownMenuItem(
-                value: 'Electric',
-                child: Text('Electric'),
+                value: 'Lightning',
+                child: Text('Lightning'),
               ),
               DropdownMenuItem(
                 value: 'Fairy',
@@ -159,44 +159,16 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
                 child: Text('Fire'),
               ),
               DropdownMenuItem(
-                value: 'Flying',
-                child: Text('Flying'),
-              ),
-              DropdownMenuItem(
-                value: 'Ghost',
-                child: Text('Ghost'),
-              ),
-              DropdownMenuItem(
                 value: 'Grass',
                 child: Text('Grass'),
-              ),
-              DropdownMenuItem(
-                value: 'Ground',
-                child: Text('Ground'),
-              ),
-              DropdownMenuItem(
-                value: 'Ice',
-                child: Text('Ice'),
-              ),
-              DropdownMenuItem(
-                value: 'Normal',
-                child: Text('Normal'),
-              ),
-              DropdownMenuItem(
-                value: 'Poison',
-                child: Text('Poison'),
               ),
               DropdownMenuItem(
                 value: 'Psychic',
                 child: Text('Psychic'),
               ),
               DropdownMenuItem(
-                value: 'Rock',
-                child: Text('Rock'),
-              ),
-              DropdownMenuItem(
-                value: 'Steel',
-                child: Text('Steel'),
+                value: 'Metal',
+                child: Text('Metal'),
               ),
               DropdownMenuItem(
                 value: 'Water',

@@ -52,10 +52,10 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
     return cards;
   }
   
-  void callOwnedFilter(bool isToggled) async{
+  void callOwnedFilter(bool isToggled, Future<List<Map<String,dynamic>>> currentCards) async{
     FilterCards filter = FilterCards();
     print('callOwnedFilter');
-    List<Map<String,dynamic>> list = await filter.filterOwned(await cards, isToggled);
+    List<Map<String,dynamic>> list = await filter.filterOwned(await currentCards, isToggled);
     if(!isToggled){
       print(activeFilter);
       //print(sort.toString());
@@ -83,7 +83,7 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
             onPressed: () {
                 isToggled = !isToggled;
                 print('button pressed');
-                callOwnedFilter(isToggled);
+                callOwnedFilter(isToggled, cards);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: isToggled ? Colors.green : Colors.grey, // Change color
@@ -170,20 +170,20 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
                 child: Text('None'),
               ),
               DropdownMenuItem(
-                value: 'Bug',
-                child: Text('Bug'),
+                value: 'Colorless',
+                child: Text('Colorless'),
               ),
               DropdownMenuItem(
-                value: 'Dark',
-                child: Text('Dark'),
+                value: 'Darkness',
+                child: Text('Darkness'),
               ),
               DropdownMenuItem(
                 value: 'Dragon',
                 child: Text('Dragon'),
               ),
               DropdownMenuItem(
-                value: 'Electric',
-                child: Text('Electric'),
+                value: 'Lightning',
+                child: Text('Lightning'),
               ),
               DropdownMenuItem(
                 value: 'Fairy',
@@ -198,43 +198,15 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
                 child: Text('Fire'),
               ),
               DropdownMenuItem(
-                value: 'Flying',
-                child: Text('Flying'),
-              ),
-              DropdownMenuItem(
-                value: 'Ghost',
-                child: Text('Ghost'),
-              ),
-              DropdownMenuItem(
                 value: 'Grass',
                 child: Text('Grass'),
-              ),
-              DropdownMenuItem(
-                value: 'Ground',
-                child: Text('Ground'),
-              ),
-              DropdownMenuItem(
-                value: 'Ice',
-                child: Text('Ice'),
-              ),
-              DropdownMenuItem(
-                value: 'Normal',
-                child: Text('Normal'),
-              ),
-              DropdownMenuItem(
-                value: 'Poison',
-                child: Text('Poison'),
               ),
               DropdownMenuItem(
                 value: 'Psychic',
                 child: Text('Psychic'),
               ),
               DropdownMenuItem(
-                value: 'Rock',
-                child: Text('Rock'),
-              ),
-              DropdownMenuItem(
-                value: 'Steel',
+                value: 'Metal',
                 child: Text('Steel'),
               ),
               DropdownMenuItem(
@@ -253,11 +225,23 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
                 if(filtered){
                   DatabaseHelper dbhelper = DatabaseHelper();
                   List<Map<String, dynamic>> newCards = await dbhelper.fetchCards();
-                  newCards = await sort!.sortCards(newCards);
+                  if(sort != null){
+                    newCards = await sort!.sortCards(newCards);
+                  }
                   filteredCards = await filter.filterCards(value, newCards);
+                  print(filteredCards);
                 } else {
                   filteredCards = await filter.filterCards(value, currentCards);
+                  if(sort != null){
+                    filteredCards = await sort!.sortCards(await cards);
+                  }
                 }
+                
+                if(isToggled){
+                  callOwnedFilter(isToggled, Future.value(filteredCards));
+                }
+                
+                
               setState(() {
                 cards = Future.value(filteredCards);
               });

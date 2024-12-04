@@ -15,6 +15,7 @@ class FilterCards {
             }
           }
         }
+        print(newCards);
         return newCards;
     } else{
       print('!isToggled');
@@ -22,6 +23,7 @@ class FilterCards {
     }
   }
   Future<List<Map<String, dynamic>>> filterCards(String? selectedType, List<Map<String,dynamic>> cards) async {
+    print("attempting to filter cards");
     if (selectedType == null) {
       return [];
     }

@@ -8,9 +8,32 @@ class BrowseCatalogPage extends StatefulWidget {
   _BrowseCatalogPageState createState() => _BrowseCatalogPageState();
 }
 
+
+class HandleFilters{
+  Future<bool> checkForFilter(List<Map<String,dynamic>> list) async{
+    final dbHelper = DatabaseHelper();
+    final cards = await dbHelper.fetchCards(); // Fetch cards from SQLite
+    SortCards? sort;
+    sort = SortByName();
+    list = await sort.sortCards(list);
+    if(cards.length == list.length){
+      for(int i = 0; i < cards.length; i++){
+        for (var key in list[i].keys) {
+          if (list[i][key] != cards[i][key]){
+            return true;
+          }
+        }
+      }
+    } else{
+      return true;
+    }
+    return false;
+  }
+}
+
 class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
   late Future<List<Map<String, dynamic>>> cards;
-
+  SortCards? sort;
   @override
   void initState() {
     super.initState();
@@ -20,7 +43,6 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
   Future<List<Map<String, dynamic>>> fetchCardsFromDatabase() async {
     final dbHelper = DatabaseHelper();
     final cards = await dbHelper.fetchCards(); // Fetch cards from SQLite
-    print('Fetched cards: $cards');  // Log the fetched cards to the console
     return cards;
   }
   
@@ -30,7 +52,6 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
       appBar: AppBar(
         title: Text('Browse Card Catalog'),
         actions: [
-
           //Dropdown for sorting
           DropdownButton<String>(
             hint: Text('Sort Cards'),
@@ -63,7 +84,6 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
               ),
             ],
             onChanged: (String? value) async {
-              SortCards? sort;
               switch(value){
                 case 'Alphabetical':
                   sort = SortByName();
@@ -89,7 +109,7 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
               }
               if (sort != null) {
                 List<Map<String,dynamic>> currentCards = await cards;
-                List<Map<String, dynamic>> sortedCards = await sort.sortCards(currentCards);
+                List<Map<String, dynamic>> sortedCards = await sort!.sortCards(currentCards);
                 setState(() {
                   cards = Future.value(sortedCards);
                 });
@@ -179,7 +199,17 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
             onChanged: (String? value) async {
                 FilterCards filter = FilterCards();
                 List<Map<String,dynamic>> currentCards = await cards;
-                List<Map<String, dynamic>> filteredCards = await filter.filterCards(value, currentCards);
+                HandleFilters handleFilters = HandleFilters();
+                bool filtered = await handleFilters.checkForFilter(currentCards);
+                List<Map<String, dynamic>> filteredCards;
+                if(filtered){
+                  DatabaseHelper dbhelper = DatabaseHelper();
+                  List<Map<String, dynamic>> newCards = await dbhelper.fetchCards();
+                  sort!.sortCards(newCards);
+                  filteredCards = await filter.filterCards(value, newCards);
+                } else {
+                  filteredCards = await filter.filterCards(value, currentCards);
+                }
                 setState(() {
                   cards = Future.value(filteredCards);
                 });

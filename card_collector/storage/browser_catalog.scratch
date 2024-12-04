@@ -1,0 +1,59 @@
+import 'package:flutter/material.dart';
+import 'database_helper.dart';
+import 'card_detail_page.dart'; // Import the detail page
+
+class BrowseCatalogPage extends StatefulWidget {
+  @override
+  _BrowseCatalogPageState createState() => _BrowseCatalogPageState();
+}
+
+class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
+  late Future<List<Map<String, dynamic>>> cards;
+
+  @override
+  void initState() {
+    super.initState();
+    cards = DatabaseHelper().fetchCards();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Browse Catalog')),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: cards,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No cards available.'));
+          } else {
+            final cardList = snapshot.data!;
+            return ListView.builder(
+              itemCount: cardList.length,
+              itemBuilder: (context, index) {
+                final card = cardList[index];
+                return ListTile(
+                  title: Text(card['name'] ?? 'Unknown'),
+                  trailing: Icon(Icons.arrow_forward),
+                  onTap: () {
+                    // Navigate to CardDetailPage with selected card data
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CardDetailPage(card: card),
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+// add these changes to browse_catalog once OfficialCardCatalog is Merged in to main

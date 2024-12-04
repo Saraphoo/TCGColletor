@@ -124,6 +124,10 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
             hint: Text('Filter Cards By Type'),
             items: const [
               DropdownMenuItem(
+                value: 'None',
+                child: Text('None'),
+              ),
+              DropdownMenuItem(
                 value: 'Bug',
                 child: Text('Bug'),
               ),
@@ -197,6 +201,7 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
               ),
             ],
             onChanged: (String? value) async {
+              if(value != 'None'){
                 FilterCards filter = FilterCards();
                 List<Map<String,dynamic>> currentCards = await cards;
                 HandleFilters handleFilters = HandleFilters();
@@ -213,6 +218,14 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
                 setState(() {
                   cards = Future.value(filteredCards);
                 });
+              } else {
+                DatabaseHelper dbhelper = DatabaseHelper();
+                List<Map<String, dynamic>> newCards = await dbhelper.fetchCards();
+                newCards = await sort!.sortCards(newCards);
+                setState(() {
+                  cards = Future.value(newCards);
+                });
+              }
             }
           ),
         ],

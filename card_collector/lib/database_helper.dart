@@ -67,17 +67,24 @@ class DatabaseHelper {
           )
         ''');
 
-          debugPrint('Database created with tables: cards, wish');
+          await db.execute('''
+          CREATE TABLE favorite (
+            id TEXT PRIMARY KEY, -- Card ID
+            timestamp TEXT -- Timestamp of when the card was marked as wished
+          )
+        ''');
+
+          debugPrint('Database created with tables: cards, wish, favorite');
         },
         onUpgrade: (db, oldVersion, newVersion) async {
           if (oldVersion < 2) {
             await db.execute('''
-            CREATE TABLE wish (
+            CREATE TABLE favorite (
               id TEXT PRIMARY KEY, -- Card ID
               timestamp TEXT -- Timestamp of when the card was marked as wished
             )
           ''');
-            debugPrint('Database upgraded: wish table added');
+            debugPrint('Database upgraded: favorite table added');
           }
         },
       ),

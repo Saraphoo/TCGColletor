@@ -7,8 +7,6 @@ class FilterCards {
       return [];
     }
 
-    DatabaseHelper dbHelper = DatabaseHelper();
-    //cards = await dbHelper.fetchCards();
     List<Map<String, dynamic>> filteredCards = [];
 
     for (var card in cards) {

@@ -18,8 +18,13 @@ class HandleSort {
           if (int.parse(list[j][sortBy]) < int.parse(list[minIndex][sortBy])) {
             minIndex = j;
           }
+        } else{
+          if (list[j][sortBy].compareTo(list[minIndex][sortBy]) < 0) {
+            minIndex = j;
+          }
         }
       }
+      
 
       // Swap the found minimum element with the first element
       Map<String,dynamic> temp = list[i];
@@ -42,8 +47,6 @@ class HandleSort {
 class SortByName implements SortCards {
   @override 
   Future<List<Map<String,dynamic>>> sortCards(List<Map<String,dynamic>>cards) async{
-      DatabaseHelper dbHelper = DatabaseHelper();
-      List<Map<String, dynamic>> data = await dbHelper.fetchCards();
       HandleSort handler = HandleSort();
       return handler.selectionSort(cards, 'name');
   }
@@ -53,8 +56,6 @@ class SortByName implements SortCards {
 class SortByMostOwned implements SortCards{
   @override
   Future<List<Map<String,dynamic>>> sortCards(List<Map<String,dynamic>> cards) async{ 
-  DatabaseHelper dbHelper = DatabaseHelper();
-    List<Map<String, dynamic>> data = await dbHelper.fetchCards();
     HandleSort handler = HandleSort();
     return handler.selectionSort(cards, 'numOwned');
   }
@@ -63,8 +64,6 @@ class SortByMostOwned implements SortCards{
 ///Defaults to alphabetical for equal number owned 
 class SortByLeastOwned implements SortCards{ 
   Future<List<Map<String,dynamic>>> sortCards(List<Map<String,dynamic>> cards) async{ 
-  DatabaseHelper dbHelper = DatabaseHelper();
-    List<Map<String, dynamic>> data = await dbHelper.fetchCards();
     HandleSort handler = HandleSort();
     return handler.reverseList(handler.selectionSort(cards, 'numOwned'));
   }
@@ -74,8 +73,6 @@ class SortByLeastOwned implements SortCards{
 class SortByMostHP implements SortCards{ 
   @override 
   Future<List<Map<String,dynamic>>> sortCards(List<Map<String,dynamic>> cards) async{ 
-  DatabaseHelper dbHelper = DatabaseHelper();
-    List<Map<String, dynamic>> data = await dbHelper.fetchCards();
     HandleSort handler = HandleSort();
     return handler.selectionSort(cards, 'hp');
   } 
@@ -85,8 +82,6 @@ class SortByMostHP implements SortCards{
 class SortByLeastHP implements SortCards{ 
   @override 
   Future<List<Map<String,dynamic>>> sortCards(List<Map<String,dynamic>> cards) async{ 
-  DatabaseHelper dbHelper = DatabaseHelper();
-    List<Map<String, dynamic>> data = await dbHelper.fetchCards();
     HandleSort handler = HandleSort();
     return handler.reverseList(handler.selectionSort(cards, 'hp'));
   } 
@@ -96,8 +91,6 @@ class SortByLeastHP implements SortCards{
 class SortByID implements SortCards{ 
   @override 
   Future<List<Map<String,dynamic>>> sortCards(List<Map<String,dynamic>> cards) async{ 
-  DatabaseHelper dbHelper = DatabaseHelper();
-    List<Map<String, dynamic>> data = await dbHelper.fetchCards();
     HandleSort handler = HandleSort();
     return handler.selectionSort(cards, 'id');
   } 

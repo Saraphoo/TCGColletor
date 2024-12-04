@@ -20,6 +20,14 @@ class DatabaseHelper {
     _database = await _initializeDatabase();
     return _database!;
   }
+  
+  Future<List<Map<String,dynamic>>> queryOwned() async {
+    final db = await database;
+    return await db.query(
+      'owned', 
+      where: 'quantity > 0',
+    );
+  }
 
   Future<Database> _initializeDatabase() async {
     final dbPath = await getDatabasesPath();

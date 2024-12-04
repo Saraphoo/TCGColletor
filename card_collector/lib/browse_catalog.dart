@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:flutter/material.dart';
 import 'card_detail_page.dart';
 import 'database_helper.dart';
@@ -11,7 +13,7 @@ class BrowseCatalogPage extends StatefulWidget {
 
 class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
   late Future<List<Map<String, dynamic>>> cards;
-
+  bool isToggled = false;
 
   @override
   void initState() {
@@ -22,16 +24,39 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
   Future<List<Map<String, dynamic>>> fetchCardsFromDatabase() async {
     final dbHelper = DatabaseHelper();
     final cards = await dbHelper.fetchCards(); // Fetch cards from SQLite
-    print('Fetched cards: $cards');  // Log the fetched cards to the console
     return cards;
   }
   
+  void callOwnedFilter(bool isToggled) async{
+    FilterCards filter = FilterCards();
+    List<Map<String,dynamic>> list = await filter.filterOwned(await cards, isToggled);
+    setState(() {
+          filter.filterOwned(list, isToggled);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Browse Card Catalog'),
+
         actions: [
+           ElevatedButton(
+            onPressed: () {
+              setState(() {
+                isToggled = !isToggled;
+              });
+                callOwnedFilter(isToggled);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isToggled ? Colors.green : Colors.grey, // Change color
+            ),
+            child: Text(
+              isToggled ? 'Owned Cards' : 'All Cards', // Change text
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
 
           //Dropdown for sorting
           DropdownButton<String>(
@@ -179,12 +204,12 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
               ),
             ],
             onChanged: (String? value) async {
-                FilterCards filter = FilterCards();
-                List<Map<String,dynamic>> currentCards = await cards;
-                List<Map<String, dynamic>> filteredCards = await filter.filterCards(value, currentCards);
-                setState(() {
-                  cards = Future.value(filteredCards);
-                });
+              FilterCards filter = FilterCards();
+              List<Map<String,dynamic>> currentCards = await cards;
+              List<Map<String, dynamic>> filteredCards = await filter.filterCards(value, currentCards);
+              setState(() {
+                cards = Future.value(filteredCards);
+              });
             }
           ),
         ],

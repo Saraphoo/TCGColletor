@@ -2,6 +2,23 @@ import 'dart:convert';
 import 'database_helper.dart';
 
 class FilterCards {
+  Future<List<Map<String,dynamic>>> filterOwned(List<Map<String,dynamic>> cards, bool isToggled) async {
+    if(isToggled){
+        DatabaseHelper dbHelper = DatabaseHelper();
+        List<Map<String,dynamic>> newCards = [];
+        List<Map<String,dynamic>> ownedCards = await dbHelper.queryOwned();
+        for(int i = 0; i < cards.length; i++){
+          for(int j = 0; j < ownedCards.length; j++){
+            if(cards[i]['id'] == ownedCards[j]['id']){
+              newCards.add(cards[i]);
+            }
+          }
+        }
+        return newCards;
+    } else{
+      return cards;
+    }
+  }
   Future<List<Map<String, dynamic>>> filterCards(String? selectedType, List<Map<String,dynamic>> cards) async {
     if (selectedType == null) {
       return [];

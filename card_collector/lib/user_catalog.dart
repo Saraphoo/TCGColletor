@@ -104,10 +104,11 @@ class _UserCatalogPageState extends State<UserCatalogPage> {
                 return ListTile(
                   title: Text(card['name']),
                   onTap: () {
+                    Navigator.pop(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CardDetailPage(card: card),
+                        builder: (context) => CardDetailPage(card: card, cards: cardList, index: index),
                       ),
                     );
                   },

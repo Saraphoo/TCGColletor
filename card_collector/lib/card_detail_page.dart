@@ -4,8 +4,9 @@ import 'database_helper.dart'; // Import DatabaseHelper for SQLite operations
 
 class CardDetailPage extends StatefulWidget {
   final Map<String, dynamic> card; // Accepts the card data
-
-  CardDetailPage({required this.card});
+  final List<Map<String,dynamic>> cards;
+  final int index;
+  CardDetailPage({required this.card, required this.cards, required this.index});
 
   @override
   _CardDetailPageState createState() => _CardDetailPageState();
@@ -191,6 +192,7 @@ class _CardDetailPageState extends State<CardDetailPage> {
                         setState(() {
                           isOwned = value ?? false;
                           if (!isOwned) copiesOwned = 0; // Reset copies if unowned
+                          if (isOwned) copiesOwned = 1; // Reset copies if unowned
                         });
                         await _updateOwnership(); // Update database
                       },
@@ -206,7 +208,7 @@ class _CardDetailPageState extends State<CardDetailPage> {
                 Row(
                   children: [
                     IconButton(
-                      onPressed: isOwned && copiesOwned > 0
+                      onPressed: isOwned && copiesOwned > 1
                           ? () async {
                         setState(() {
                           copiesOwned--;
@@ -289,6 +291,29 @@ class _CardDetailPageState extends State<CardDetailPage> {
                   Text('Name: ${set['name']}'),
                 ],
               ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_forward,
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    final newCard = widget.cards[widget.index+1];
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CardDetailPage(card: newCard, cards: widget.cards, index: widget.index + 1),
+                      ),
+                    );
+                  }
+                ),
+
+              ),
+            ),
           ],
         ),
       ),

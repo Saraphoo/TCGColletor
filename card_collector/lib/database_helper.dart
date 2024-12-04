@@ -216,7 +216,7 @@ class DatabaseHelper {
       whereArgs: [cardId],
     );
     if (result.isNotEmpty) {
-      return result.first['quantity'] as int;
+      return int.parse(result.first['quantity'].toString());
     }
     return 0; // Not owned
   }

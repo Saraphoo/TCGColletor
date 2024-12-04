@@ -48,6 +48,7 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
     return cards;
   }
   
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -247,13 +248,14 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
               itemCount: cardList.length,
               itemBuilder: (context, index) {
                 final card = cardList[index];
+                
                 return ListTile(
                   title: Text(card['name']),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CardDetailPage(card: card),
+                        builder: (context) => CardDetailPage(card: card, cards: cardList, index: index),
                       ),
                     );
                   },

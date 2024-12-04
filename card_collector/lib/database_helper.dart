@@ -30,7 +30,7 @@ class DatabaseHelper {
     return await databaseFactory.openDatabase(
       path,
       options: OpenDatabaseOptions(
-        version: 2, // Increment this version
+        version: 3, // Increment this version
         onCreate: (db, version) async {
           await db.execute('''
           CREATE TABLE cards (
@@ -76,8 +76,9 @@ class DatabaseHelper {
 
           debugPrint('Database created with tables: cards, wish, favorite');
         },
+
         onUpgrade: (db, oldVersion, newVersion) async {
-          if (oldVersion < 2) {
+          if (oldVersion < 3) {
             await db.execute('''
             CREATE TABLE favorite (
               id TEXT PRIMARY KEY, -- Card ID
@@ -146,4 +147,37 @@ class DatabaseHelper {
     );
     return result.isNotEmpty; // Returns true if the card is found
   }
+
+  ///Insert Favorite Card into the database
+  Future<void> addFavorite(String cardId) async {
+    final db = await database;
+    await db.insert(
+      'favorite',
+      {
+        'id': cardId,
+        'timestamp': DateTime.now().toIso8601String(), // Current timestamp
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace, // Replace if exists
+    );
+  }
+/// Remove Favorite card from the database
+  Future<void> removeFavorite(String cardId) async {
+    final db = await database;
+    await db.delete(
+      'favorite',
+      where: 'id = ?',
+      whereArgs: [cardId],
+    );
+  }
+
+/// Check if a card is favorited
+   Future<bool> isFavorite(String cardId) async {
+     final db = await database;
+     final result = await db.query(
+       'favorite',
+       where: 'id = ?',
+       whereArgs: [cardId],
+     );
+     return result.isNotEmpty; // Returns true if the card is found
+   }
 }

@@ -21,6 +21,7 @@ class _CardDetailPageState extends State<CardDetailPage> {
   void initState() {
     super.initState();
     _loadWishState(); // Load the initial wish state from the database
+    _loadFavoriteState(); // Load the initial favorite state from the database
   }
 
   /// Load the wish state from the database
@@ -43,6 +44,29 @@ class _CardDetailPageState extends State<CardDetailPage> {
       await dbHelper.addWish(widget.card['id']); // Add to wish table
     } else {
       await dbHelper.removeWish(widget.card['id']); // Remove from wish table
+    }
+  }
+
+  /// Load the favorite state from the database
+  Future<void> _loadFavoriteState() async {
+    final dbHelper = DatabaseHelper();
+    final favorite = await dbHelper.isFavorite(widget.card['id']); // Check if card is favorite
+    setState(() {
+      isFavorite = favorite; // Update the UI state
+    });
+  }
+
+  /// Toggle the favorite state and update the database
+  Future<void> _toggleFavorite() async {
+    final dbHelper = DatabaseHelper();
+    setState(() {
+      isFavorite = !isFavorite; // Toggle state
+    });
+
+    if (isFavorite) {
+      await dbHelper.addFavorite(widget.card['id']); // Add to favorite table
+    } else {
+      await dbHelper.removeFavorite(widget.card['id']); // Remove from favorite table
     }
   }
 
@@ -69,11 +93,7 @@ class _CardDetailPageState extends State<CardDetailPage> {
                 isFavorite ? Icons.favorite : Icons.favorite_border, // Filled or hollow heart
                 color: isFavorite ? Colors.red : Colors.grey,
               ),
-              onPressed: () {
-                setState(() {
-                  isFavorite = !isFavorite; // Toggle state
-                });
-              },
+              onPressed: _toggleFavorite, // Call the toggle favorite function
             ),
           ),
 

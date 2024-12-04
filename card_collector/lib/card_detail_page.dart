@@ -1,5 +1,6 @@
 import 'dart:convert'; // For JSON decoding
 import 'package:flutter/material.dart';
+import 'database_helper.dart'; // Import DatabaseHelper for SQLite operations
 
 class CardDetailPage extends StatefulWidget {
   final Map<String, dynamic> card; // Accepts the card data
@@ -15,6 +16,35 @@ class _CardDetailPageState extends State<CardDetailPage> {
   bool isFavorite = false; // State to track if the card is favorite
   bool isOwned = false; // State to track if the card is owned
   int copiesOwned = 0; // State to track the number of copies owned
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWishState(); // Load the initial wish state from the database
+  }
+
+  /// Load the wish state from the database
+  Future<void> _loadWishState() async {
+    final dbHelper = DatabaseHelper();
+    final wished = await dbHelper.isWished(widget.card['id']); // Check if card is wished
+    setState(() {
+      isWishedFor = wished; // Update the UI state
+    });
+  }
+
+  /// Toggle the wish state and update the database
+  Future<void> _toggleWish() async {
+    final dbHelper = DatabaseHelper();
+    setState(() {
+      isWishedFor = !isWishedFor; // Toggle state
+    });
+
+    if (isWishedFor) {
+      await dbHelper.addWish(widget.card['id']); // Add to wish table
+    } else {
+      await dbHelper.removeWish(widget.card['id']); // Remove from wish table
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +85,7 @@ class _CardDetailPageState extends State<CardDetailPage> {
                 isWishedFor ? Icons.star : Icons.star_border, // Solid or hollow star
                 color: isWishedFor ? Colors.orange : Colors.grey,
               ),
-              onPressed: () {
-                setState(() {
-                  isWishedFor = !isWishedFor; // Toggle state
-                });
-              },
+              onPressed: _toggleWish, // Call the toggle wish function
             ),
           ),
         ],

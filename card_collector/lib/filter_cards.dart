@@ -5,6 +5,7 @@ class FilterCards {
   Future<List<Map<String,dynamic>>> filterOwned(List<Map<String,dynamic>> cards, bool isToggled) async {
     DatabaseHelper dbHelper = DatabaseHelper();
     if(isToggled){
+    print('isToggled');
         List<Map<String,dynamic>> newCards = [];
         List<Map<String,dynamic>> ownedCards = await dbHelper.queryOwned();
         for(int i = 0; i < cards.length; i++){
@@ -16,6 +17,7 @@ class FilterCards {
         }
         return newCards;
     } else{
+      print('!isToggled');
       return dbHelper.fetchCards();
     }
   }

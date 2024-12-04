@@ -191,6 +191,7 @@ class _CardDetailPageState extends State<CardDetailPage> {
                         setState(() {
                           isOwned = value ?? false;
                           if (!isOwned) copiesOwned = 0; // Reset copies if unowned
+                          if (isOwned) copiesOwned = 1; // Reset copies to 1 if owned
                         });
                         await _updateOwnership(); // Update database
                       },
@@ -206,7 +207,7 @@ class _CardDetailPageState extends State<CardDetailPage> {
                 Row(
                   children: [
                     IconButton(
-                      onPressed: isOwned && copiesOwned > 0
+                      onPressed: isOwned && copiesOwned > 1
                           ? () async {
                         setState(() {
                           copiesOwned--;

@@ -31,12 +31,7 @@ class LandingPage extends StatelessWidget {
             ),
             SizedBox(height: 20.0),
             // Your Card Catalog Button
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/your_catalog');
-              },
-              child: Text('Your Card Catalog'),
-            ),
+            
           ],
         ),
       ),

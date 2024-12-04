@@ -86,6 +86,7 @@ class DatabaseHelper {
           CREATE TABLE owned(
             id TEXT PRIMARY KEY, -- Card ID
             quantity TEXT -- Quantity of card owned
+            )
           ''');
 
           debugPrint('Database created with tables: cards, wish, favorite');
@@ -222,7 +223,7 @@ class DatabaseHelper {
       whereArgs: [cardId],
     );
     if (result.isNotEmpty) {
-      return result.first['quantity'] as int;
+      return int.parse(result.first['quantity'].toString());
     }
     return 0; // Not owned
   }

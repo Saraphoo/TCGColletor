@@ -54,16 +54,20 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
   
   void callOwnedFilter(bool isToggled) async{
     FilterCards filter = FilterCards();
-    
+    print('callOwnedFilter');
     List<Map<String,dynamic>> list = await filter.filterOwned(await cards, isToggled);
     if(!isToggled){
-      list = await filter.filterCards(activeFilter, list);
+      print(activeFilter);
+      //print(sort.toString());
+      if(activeFilter != null && activeFilter != 'None'){
+        list = await filter.filterCards(activeFilter, list);
+      }
       if(sort != null){
         list = await sort!.sortCards(list);
       }
     }
     setState(() {
-      list;
+      cards = Future.value(list);
     });
   }
 
@@ -76,9 +80,8 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
         actions: [
            ElevatedButton(
             onPressed: () {
-              setState(() {
                 isToggled = !isToggled;
-              });
+                print('button pressed');
                 callOwnedFilter(isToggled);
             },
             style: ElevatedButton.styleFrom(
@@ -260,7 +263,9 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
               } else {
                 DatabaseHelper dbhelper = DatabaseHelper();
                 List<Map<String, dynamic>> newCards = await dbhelper.fetchCards();
-                newCards = await sort!.sortCards(newCards);
+                if(sort != null){
+                  newCards = await sort!.sortCards(newCards);
+                }
                 setState(() {
                   cards = Future.value(newCards);
                 });

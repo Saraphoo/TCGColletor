@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'card_detail_page.dart';
 import 'database_helper.dart';
 import 'sort_cards.dart';
 import 'filter_cards.dart';
@@ -10,6 +11,7 @@ class BrowseCatalogPage extends StatefulWidget {
 
 class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
   late Future<List<Map<String, dynamic>>> cards;
+
 
   @override
   void initState() {
@@ -205,12 +207,14 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
                 return ListTile(
                   title: Text(card['name']),
                   onTap: () {
-                    Navigator.pushNamed(
+                    Navigator.push(
                       context,
-                      '/card_detail',
-                      arguments: card, // Pass the card data to the detail page
+                      MaterialPageRoute(
+                        builder: (context) => CardDetailPage(card: card),
+                      ),
                     );
                   },
+
                 );
               },
             );

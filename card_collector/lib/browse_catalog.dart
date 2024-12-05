@@ -206,12 +206,8 @@ class _BrowseCatalogPageState extends State<BrowseCatalogPage> {
                 child: Text('Psychic'),
               ),
               DropdownMenuItem(
-                value: 'Rock',
-                child: Text('Rock'),
-              ),
-              DropdownMenuItem(
-                value: 'Steel',
-                child: Text('Steel'),
+                value: 'Metal',
+                child: Text('Metal'),
               ),
               DropdownMenuItem(
                 value: 'Water',

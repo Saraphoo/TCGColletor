@@ -80,6 +80,46 @@ Populate the SQLite database with the data.
 
 -lib/filter_cards.dart: Filters cards by a specified attribute
 
+**Database Tables**
+- **cards**: Stores all card details fetched from the API.
+- **wish**: Tracks cards marked as "Wished For."
+- **favorite**: Tracks cards marked as "Favorited."
+- **owned**: Tracks user-owned cards and their quantities.
+
+**Key Features for Evaluation**
+
+**User Interactivity**:
+- Mark cards as "Wished For" or "Favorited."
+- Increment/decrement owned quantities.
+
+**SQLite Integration**:
+- Persistent local storage for card details.
+- Tables for managing user-specific data (e.g., `wish`, `favorite`, `owned`).
+
+**API Integration**:
+- Fetches and stores Pokémon card data locally.
+- Uses the Pokémon TCG API for real-time data retrieval.
+
+**Clean UI**:
+- User-friendly interfaces for catalog browsing and card management.
+- Filters and sorting options for a tailored user experience.
+
+**Known Issues**
+- **API Key**: The app requires a valid Pokémon TCG API key. Without it, data fetching will fail.
+- **Desktop Platforms**: If testing on desktop, ensure the database is initialized with `sqflite_common_ffi`.
+
+**Contact**
+For any questions or support, please contact:
+- **Name**: Sarah Riley
+- **Email**: rileys14@mymail.nku.edu
+- 
+
+**Example Usage**
+1. Open the app.
+2. Browse the card catalog via the **Browse Catalog** option.
+3. Mark cards as "Owned," "Wished For," or "Favorited" using the detail page.
+4. View your owned cards in the **User Catalog** section.
+5. Sort and filter cards as needed.
 
 
 

@@ -63,14 +63,23 @@ Populate the SQLite database with the data.
 
 **Project Structure**
 **Main Components**
+
 -lib/main.dart: Entry point for the application.
+
 -lib/card_detail_page.dart: Displays detailed information for each card.
+
 -lib/browse_catalog.dart: Allows users to browse all cards.
+
 -lib/user_catalog_page.dart: Displays the user's owned cards.
+
 -lib/database_helper.dart: Handles SQLite operations.
+
 -lib/pokemon_tcg_service.dart: Fetches data from the Pokémon TCG API.
+
 -lib/sort_cards.dart: Sorts cards set by specified attribute
+
 -lib/filter_cards.dart: Filters cards by a specified attribute
+
 
 
 

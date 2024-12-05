@@ -41,4 +41,17 @@ Before running the project, ensure you have the following installed:
    ```bash
    git clone <repository_url>
    cd pokemon_card_tracker
+
+2. **Install Dependencies: Run the following command to fetch all necessary Flutter and Dart packages**:
+
+```bash
+flutter pub get
 ```
+3. **Configure the .env File: Create a .env file in the root of the project directory and add the following**:
+```bash
+API_KEY=<your_pokemon_tcg_api_key>
+```
+Replace <your_pokemon_tcg_api_key> with your Pokémon TCG API key.
+
+4. 
+
